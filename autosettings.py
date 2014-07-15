@@ -114,11 +114,6 @@ def get_django_settings(modulename, settings):
         last = modulename.pop()
         _temp = __import__('.'.join(modulename), fromlist=[last])
         settings_module = _temp.__dict__[last]
-
-        print dir(settings_module)
-        if 'init' in dir(settings_module):
-            print "running init"
-            settings_module.init(settings)
     """
     projectroot = settings['BASE_DIR']
     modulepath = os.path.join(*modulename.split('.')) + '.py'
@@ -135,6 +130,8 @@ def get_django_settings(modulename, settings):
             settings[k] = v
 
 def config(projectroot=None, settings_func=None):
+    if config.loaded: return
+
     if not projectroot:
         projectroot = discover_projectroot()
 
@@ -157,5 +154,7 @@ def config(projectroot=None, settings_func=None):
         settings_func = django.conf.settings.configure
     
     settings_func(**settings)
+    config.loaded = True
 
     return projectroot, env, settings
+config.loaded = False
