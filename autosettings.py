@@ -11,6 +11,7 @@ noprefix_keys = [
             'BASE_DIR',
             'DATABASE_URL',
             'MEMCACHED_URL',
+            'RAVEN_DSN',
         ]
 
 def plugin_django(env, settings):
@@ -53,6 +54,12 @@ def plugin_memcached(env, settings):
             }        
         }
     })
+
+def plugin_raven(env, settings):
+    dsn = env.get('RAVEN_DSN', None)
+    if not dsn: return
+
+    settings['RAVEN_CONFIG'] = {'dsn': dsn} 
 
 def discover_projectroot(test_calling=None):
     frame = sys._getframe()
